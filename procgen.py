@@ -6,7 +6,9 @@ from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
 import tcod
 
 import entity_factories
+from entity import Item
 from game_map import GameMap
+from rarity_levels import RarityLevel
 import tile_types
 
 if TYPE_CHECKING:
@@ -14,7 +16,7 @@ if TYPE_CHECKING:
     from entity import Entity
 
 max_items_by_floor = [
-    (0, 1),
+    (0, 5),
     (3, 2),
 ]
 
@@ -37,6 +39,16 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     5: [(entity_factories.troll, 30)],
     7: [(entity_factories.troll, 60)],
 }
+
+rarity_chances = {
+    RarityLevel.COMMON: 80, 
+    RarityLevel.UNCOMMON: 60, 
+    RarityLevel.RARE: 30, 
+    RarityLevel.LEGENDARY: 10, 
+    RarityLevel.UNIQUE: 5, 
+    RarityLevel.SET: 2, 
+}
+
 
 def get_entities_at_random(
     weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
@@ -125,7 +137,13 @@ def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) 
         y = random.randint(room.y1 + 1, room.y2 - 1)
 
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            entity.spawn(dungeon, x, y)
+            placed_entity = entity.spawn(dungeon, x, y)
+            if type(placed_entity) == Item:
+                if placed_entity.equippable:
+                    placed_entity.equippable.rarity = random.choices(
+                        list(rarity_chances.keys()), weights=list(rarity_chances.values())
+                    )[0]
+                    placed_entity.color = placed_entity.equippable.get_color()
 
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]

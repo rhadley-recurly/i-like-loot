@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 
+import color
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 
 import tcod.event
@@ -339,7 +340,12 @@ class InventoryEventHandler(AskUserEventHandler):
                 if is_equipped:
                     item_string = f"{item_string} (E)"
 
-                console.print(x + 1, y + i + 1, item_string)
+                if item.equippable:
+                    color = item.equippable.get_color()
+                else:
+                    color = color.white
+
+                console.print(x + 1, y + i + 1, item_string, fg=color)
         else:
             console.print(x + 1, y + 1, "(Empty)")
 

@@ -12,6 +12,7 @@ from typing import Optional
 import tcod
 
 import color
+from rarity_levels import RarityLevel
 from engine import Engine
 import entity_factories
 from game_map import GameWorld
@@ -53,7 +54,9 @@ def new_game() -> Engine:
     )
 
     dagger = copy.deepcopy(entity_factories.dagger)
+    dagger.equippable.rarity = RarityLevel.COMMON
     leather_armor = copy.deepcopy(entity_factories.leather_armor)
+    leather_armor.equippable.rarity = RarityLevel.COMMON
 
     dagger.parent = player.inventory
     leather_armor.parent = player.inventory

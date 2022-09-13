@@ -76,7 +76,7 @@ dagger = Item(
 
 sword = Item(
     char="/",
-    color=(0, 191, 255),
+    color = (255, 255, 255),
     name="Sword",
     equippable=equippable.Sword(),
 )
