@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import math
 from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
@@ -123,17 +124,19 @@ class MeleeAction(ActionWithDirection):
         else:
             damage = random.randint(self.entity.fighter.unarmed_min_damage, self.entity.fighter.unarmed_max_damage) - target.fighter.defense
 
+        final_damage = int(math.ceil(damage * (100/(100 + target.fighter.defense))))
+
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
 
-        if damage > 0:
+        if final_damage > 0:
             self.engine.message_log.add_message(
-                f"{attack_desc} for {damage} hit points.", attack_color
+                f"{attack_desc} for {final_damage} hit points.", attack_color
             )
-            target.fighter.hp -= damage
+            target.fighter.hp -= final_damage
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color

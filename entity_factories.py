@@ -23,7 +23,7 @@ orc = Actor(
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=10, base_defense=0, min_damage=1, max_damage=4),
+    fighter=Fighter(hp=10, base_defense=0, min_damage=1, max_damage=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
 )
@@ -34,7 +34,7 @@ troll = Actor(
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=16, base_defense=1, min_damage=1, max_damage=8),
+    fighter=Fighter(hp=16, base_defense=4, min_damage=4, max_damage=12),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=100),
 )

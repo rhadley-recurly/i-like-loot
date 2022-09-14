@@ -46,7 +46,7 @@ def new_game() -> Engine:
     )
     
     engine.game_world.generate_floor()
-    engine.game_map = engine.game_world.game_maps[0]
+    engine.game_map = engine.game_world.game_maps[1]
     engine.update_fov()
 
     engine.message_log.add_message(
