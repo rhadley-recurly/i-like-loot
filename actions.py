@@ -6,6 +6,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
 import exceptions
+from render_functions import get_names_at_location
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -155,6 +156,16 @@ class MovementAction(ActionWithDirection):
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is blocked by an entity.
             raise exceptions.Impossible("That way is blocked.")
+
+        
+        if self.entity == self.engine.player:
+            names = ", ".join(
+                entity.name for entity in self.engine.game_map.entities if entity.x == self.entity.x + self.dx and entity.y == self.entity.y + self.dy
+            )
+            if names:
+                self.engine.message_log.add_message(
+                    "You see here: " + names, color.white
+                )
 
         self.entity.move(self.dx, self.dy)
 

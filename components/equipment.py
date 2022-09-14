@@ -70,5 +70,3 @@ class Equipment(BaseComponent):
             self.unequip_from_slot(slot, add_message)
         else:
             self.equip_to_slot(slot, equippable_item, add_message)
-
-        print("Weapon stats\nDamage: " + str(self.min_damage) + "-" + str(self.max_damage))
