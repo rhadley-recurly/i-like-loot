@@ -16,6 +16,20 @@ class Equipment(BaseComponent):
         self.armor = armor
 
     @property
+    def min_damage(self) -> int:
+        if self.weapon:
+            return self.weapon.equippable.min_dmg
+        else:
+           return self.power_bonus
+
+    @property
+    def max_damage(self) -> int:
+        if self.weapon:
+            return self.weapon.equippable.max_dmg
+        else:
+            return self.power_bonus
+
+    @property
     def defense_bonus(self) -> int:
         bonus = 0
 
@@ -84,3 +98,5 @@ class Equipment(BaseComponent):
             self.unequip_from_slot(slot, add_message)
         else:
             self.equip_to_slot(slot, equippable_item, add_message)
+
+        print("Weapon stats\nDamage: " + str(self.min_damage) + "-" + str(self.max_damage))

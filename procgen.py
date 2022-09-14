@@ -16,8 +16,9 @@ if TYPE_CHECKING:
     from entity import Entity
 
 max_items_by_floor = [
-    (0, 5),
+    (0, 10),
     (3, 2),
+    (5, 4),
 ]
 
 max_monsters_by_floor = [
@@ -27,7 +28,7 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35)],
+    0: [(entity_factories.sword, 100)],
     2: [(entity_factories.confusion_scroll, 10)],
     4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
     6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
@@ -41,14 +42,13 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
 }
 
 rarity_chances = {
-    RarityLevel.COMMON: 80, 
-    RarityLevel.UNCOMMON: 60, 
-    RarityLevel.RARE: 30, 
-    RarityLevel.LEGENDARY: 10, 
-    RarityLevel.UNIQUE: 5, 
-    RarityLevel.SET: 2, 
+    RarityLevel.COMMON: 90, 
+    RarityLevel.UNCOMMON: 50, 
+    RarityLevel.RARE: 20, 
+    RarityLevel.LEGENDARY: 5, 
+    RarityLevel.UNIQUE: 2, 
+    RarityLevel.SET: 1, 
 }
-
 
 def get_entities_at_random(
     weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
@@ -137,13 +137,7 @@ def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) 
         y = random.randint(room.y1 + 1, room.y2 - 1)
 
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            placed_entity = entity.spawn(dungeon, x, y)
-            if type(placed_entity) == Item:
-                if placed_entity.equippable:
-                    placed_entity.equippable.rarity = random.choices(
-                        list(rarity_chances.keys()), weights=list(rarity_chances.values())
-                    )[0]
-                    placed_entity.color = placed_entity.equippable.get_color()
+            entity.spawn(dungeon, x, y, rarity_chances)
 
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]

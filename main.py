@@ -42,7 +42,7 @@ def main() -> None:
                     for event in tcod.event.wait():
                         context.convert_event(event)
                         handler = handler.handle_events(event)
-                        save_game(handler, "savegame.sav")
+                        #save_game(handler, "savegame.sav")
                 except Exception:  # Handle exceptions in game.
                     traceback.print_exc()  # Print error to stderr.
                     # Then print the error to the message log.

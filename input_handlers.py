@@ -317,7 +317,7 @@ class InventoryEventHandler(AskUserEventHandler):
 
         y = 0
 
-        width = len(self.TITLE) + 4
+        width = len(self.TITLE) + 10
 
         console.draw_frame(
             x=x,
@@ -341,11 +341,11 @@ class InventoryEventHandler(AskUserEventHandler):
                     item_string = f"{item_string} (E)"
 
                 if item.equippable:
-                    color = item.equippable.get_color()
+                    fg_color = item.equippable.get_color()
                 else:
-                    color = color.white
+                    fg_color = color.white
 
-                console.print(x + 1, y + i + 1, item_string, fg=color)
+                console.print(x + 1, y + i + 1, item_string, fg=fg_color)
         else:
             console.print(x + 1, y + 1, "(Empty)")
 

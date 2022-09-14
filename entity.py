@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import math
+import random
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
     
 from render_order import RenderOrder
@@ -52,7 +53,7 @@ class Entity:
     def gamemap(self) -> GameMap:
         return self.parent.gamemap
 
-    def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
+    def spawn(self: T, gamemap: GameMap, x: int, y: int, rarity_chances: Optional[{}]) -> T:
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
         clone.x = x
@@ -158,3 +159,24 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+
+    def spawn(self: T, gamemap: GameMap, x: int, y: int, rarity_chances: {}) -> T:
+        """Spawn a copy of this instance at the given location."""
+        clone = copy.deepcopy(self)
+        clone.x = x
+        clone.y = y
+        clone.parent = gamemap
+        gamemap.entities.add(clone)
+
+        if self.equippable:
+            min_ilvl = int(gamemap.engine.game_world.current_floor * 0.5)
+            max_ilvl = int(gamemap.engine.game_world.current_floor * 1.5)
+
+            clone.equippable.rarity = random.choices(
+                list(rarity_chances.keys()), weights=list(rarity_chances.values())
+            )[0]
+            clone.color = clone.equippable.get_color()
+            clone.equippable.ilvl = random.randint(min_ilvl, max_ilvl)
+            clone.name = "(ilvl " + str(clone.equippable.ilvl) + ") " + clone.name
+
+        return clone
