@@ -13,11 +13,12 @@ if TYPE_CHECKING:
 class Fighter(BaseComponent):
     parent: Actor
 
-    def __init__(self, hp: int, base_defense: int, base_power: int):
+    def __init__(self, hp: int, base_defense: int, min_damage: int, max_damage):
         self.max_hp = hp
         self._hp = hp
         self.base_defense = base_defense
-        self.base_power = base_power
+        self.min_damage = min_damage
+        self.max_damage = max_damage
 
     @property
     def hp(self) -> int:
@@ -31,25 +32,18 @@ class Fighter(BaseComponent):
 
     @property
     def defense(self) -> int:
-        return self.base_defense + self.defense_bonus
-
-    @property
-    def power(self) -> int:
-        return self.base_power + self.power_bonus
-
-    @property
-    def defense_bonus(self) -> int:
-        if self.parent.equipment:
-            return self.parent.equipment.defense_bonus
+        if self.parent.equipment.armor:
+            return self.parent.equipment.armor.equippable.equipped_defense
         else:
-            return 0
+            return self.base_defense
 
     @property
-    def power_bonus(self) -> int:
-        if self.parent.equipment:
-            return self.parent.equipment.power_bonus
-        else:
-            return 0
+    def unarmed_min_damage(self) -> int:
+        return self.min_damage
+
+    @property
+    def unarmed_max_damage(self) -> int:
+        return self.max_damage
 
     def die(self) -> None:
         if self.engine.player is self.parent:

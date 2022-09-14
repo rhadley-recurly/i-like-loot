@@ -118,7 +118,10 @@ class MeleeAction(ActionWithDirection):
         if not target:
             raise exceptions.Impossible("Nothing to attack.")
 
-        damage = random.randint(self.entity.equipment.min_damage, self.entity.equipment.max_damage) - target.fighter.defense
+        if self.entity.equipment.weapon:
+            damage = random.randint(self.entity.equipment.min_damage, self.entity.equipment.max_damage) - target.fighter.defense
+        else:
+            damage = random.randint(self.entity.fighter.unarmed_min_damage, self.entity.fighter.unarmed_max_damage) - target.fighter.defense
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:
