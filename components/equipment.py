@@ -25,18 +25,6 @@ class Equipment(BaseComponent):
         if self.weapon:
             return self.weapon.equippable.max_dmg
 
-    @property
-    def defense_bonus(self) -> int:
-        bonus = 0
-
-        if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.defense_bonus
-
-        if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.defense_bonus
-
-        return bonus
-
     def item_is_equipped(self, item: Item) -> bool:
         return self.weapon == item or self.armor == item
 

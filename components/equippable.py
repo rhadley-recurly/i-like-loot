@@ -18,14 +18,14 @@ class Equippable(BaseComponent):
         self,
         equipment_type: EquipmentType,
         ilvl: int = 0,
-        defense_bonus: int = 0,
+        defense: int = 0,
         min_damage: int = 0,
         max_damage: int = 0,
     ):
         self.equipment_type = equipment_type
 
         self.ilvl = ilvl
-        self.defense_bonus = defense_bonus
+        self.defense = defense
         self.min_damage = min_damage
         self.max_damage = max_damage
 
@@ -72,6 +72,10 @@ class Equippable(BaseComponent):
     def max_dmg(self) -> int:
         return int((self.max_damage + self.ilvl) * self.get_multiplier())
 
+    @property
+    def equipped_defense(self) -> int:
+        return int((self.defense + self.ilvl) * self.get_multiplier())
+
 class Dagger(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=1, max_damage=4)
@@ -82,8 +86,8 @@ class Sword(Equippable):
 
 class LeatherArmor(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=1)
+        super().__init__(equipment_type=EquipmentType.ARMOR, defense=3)
 
 class ChainMail(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=3)
+        super().__init__(equipment_type=EquipmentType.ARMOR, defense=6)

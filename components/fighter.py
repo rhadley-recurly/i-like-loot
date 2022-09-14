@@ -32,7 +32,10 @@ class Fighter(BaseComponent):
 
     @property
     def defense(self) -> int:
-        return self.base_defense + self.defense_bonus
+        if self.parent.equipment.armor:
+            return self.parent.equipment.armor.equippable.equipped_defense
+        else:
+            return self.base_defense
 
     @property
     def unarmed_min_damage(self) -> int:
@@ -41,13 +44,6 @@ class Fighter(BaseComponent):
     @property
     def unarmed_max_damage(self) -> int:
         return self.max_damage
-
-    @property
-    def defense_bonus(self) -> int:
-        if self.parent.equipment:
-            return self.parent.equipment.defense_bonus
-        else:
-            return 0
 
     def die(self) -> None:
         if self.engine.player is self.parent:
