@@ -123,6 +123,24 @@ class Actor(Entity):
         self.level = level
         self.level.parent = self
 
+    def spawn(self: T, gamemap: GameMap, x: int, y: int, rarity_chances: {}) -> T:
+        """Spawn a copy of this instance at the given location."""
+        clone = copy.deepcopy(self)
+        clone.x = x
+        clone.y = y
+        clone.parent = gamemap
+        gamemap.entities.add(clone)
+
+        scale_base = 1
+        scale_factor = int(gamemap.engine.game_world.current_floor * 0.5)
+        clone.fighter.max_hp += scale_factor
+        clone.fighter.hp += scale_factor
+        clone.fighter.base_defense += scale_factor
+        clone.fighter.min_damage += scale_factor
+        clone.fighter.max_damage += scale_factor
+
+        return clone
+
     @property
     def is_alive(self) -> bool:
         """Returns True as long as this actor can perform actions."""
