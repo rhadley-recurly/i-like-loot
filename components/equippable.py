@@ -18,7 +18,6 @@ class Equippable(BaseComponent):
         self,
         equipment_type: EquipmentType,
         ilvl: int = 0,
-        power_bonus: int = 0,
         defense_bonus: int = 0,
         min_damage: int = 0,
         max_damage: int = 0,
@@ -26,7 +25,6 @@ class Equippable(BaseComponent):
         self.equipment_type = equipment_type
 
         self.ilvl = ilvl
-        self.power_bonus = power_bonus
         self.defense_bonus = defense_bonus
         self.min_damage = min_damage
         self.max_damage = max_damage
@@ -76,11 +74,11 @@ class Equippable(BaseComponent):
 
 class Dagger(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=2, min_damage=1, max_damage=4)
+        super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=1, max_damage=4)
 
 class Sword(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, min_damage=1, max_damage=8)
+        super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=1, max_damage=8)
 
 class LeatherArmor(Equippable):
     def __init__(self) -> None:

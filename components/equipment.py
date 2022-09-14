@@ -19,15 +19,11 @@ class Equipment(BaseComponent):
     def min_damage(self) -> int:
         if self.weapon:
             return self.weapon.equippable.min_dmg
-        else:
-           return self.power_bonus
 
     @property
     def max_damage(self) -> int:
         if self.weapon:
             return self.weapon.equippable.max_dmg
-        else:
-            return self.power_bonus
 
     @property
     def defense_bonus(self) -> int:
@@ -38,18 +34,6 @@ class Equipment(BaseComponent):
 
         if self.armor is not None and self.armor.equippable is not None:
             bonus += self.armor.equippable.defense_bonus
-
-        return bonus
-
-    @property
-    def power_bonus(self) -> int:
-        bonus = 0
-
-        if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.power_bonus
-
-        if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.power_bonus
 
         return bonus
 
