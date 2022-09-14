@@ -131,8 +131,8 @@ class Actor(Entity):
         clone.parent = gamemap
         gamemap.entities.add(clone)
 
-        scale_base = 1
-        scale_factor = int(gamemap.engine.game_world.current_floor * 0.5)
+        scale_base = 2
+        scale_factor = scale_base * int(gamemap.engine.game_world.current_floor * 0.5)
         clone.fighter.max_hp += scale_factor
         clone.fighter.hp += scale_factor
         clone.fighter.base_defense += scale_factor
