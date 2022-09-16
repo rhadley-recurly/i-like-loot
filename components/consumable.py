@@ -138,6 +138,45 @@ class ConfusionConsumable(Consumable):
     def get_use_text(self) -> str:
         return "(R)ead"
 
+class BlinkConsumable(Consumable):
+    def get_action(self, consumer: Actor) -> SingleRangedAttackHandler:
+        self.engine.message_log.add_message(
+            "Select a target location.", color.needs_target
+        )
+        return SingleRangedAttackHandler(
+            self.engine,
+            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+        )
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        target = action.target_actor
+        target_xy = action.target_xy
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise Impossible("You cannot target an area that you cannot see.")
+        if target:
+            raise Impossible("You must select an empty tile.")
+        if target is consumer:
+            raise Impossible("You cannot blink to yourself!")
+
+        self.engine.message_log.add_message(
+            f"You blink a short distance!",
+            color.status_effect_applied,
+        )
+        consumer.x = target_xy[0]
+        consumer.y = target_xy[1]
+        self.consume()
+
+    @property
+    def description(self) -> str:
+        description = f"Instantly blink to any tile in sight."
+
+        return description
+
+    def get_use_text(self) -> str:
+        return "(R)ead"
+
 class FireballDamageConsumable(Consumable):
     def __init__(self, damage: int, radius: int):
         self.damage = damage

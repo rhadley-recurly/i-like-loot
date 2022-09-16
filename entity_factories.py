@@ -68,6 +68,13 @@ health_potion = Item(
     consumable=consumable.HealingConsumable(amount=5),
 )
 
+super_health_potion = Item(
+    char="!",
+    color=(163, 31, 31),
+    name="Super Health Potion",
+    consumable=consumable.HealingConsumable(amount=20),
+)
+
 lightning_scroll = Item(
     char="~",
     color=(255, 255, 0),
@@ -87,6 +94,13 @@ fireball_scroll = Item(
     color=(255, 0, 0),
     name="Fireball Scroll",
     consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
+)
+
+blink_scroll = Item(
+    char="~",
+    color=(177, 196, 193),
+    name="Blink Scroll",
+    consumable=consumable.BlinkConsumable(),
 )
 
 dagger = Item(
