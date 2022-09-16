@@ -24,3 +24,9 @@
 * Character info: c
 * View message log: v
 * Save and Quit: S
+
+## Gameplay
+
+Explore and find loot, upgrading your equipment as you go. Conserve your potions and scrolls for deeper levels. Make it to dungeon level 15+ and find and kill a (D)ragon to win!
+
+![Dungeon](images/screenshots/dungeon.png?raw=true "Dungeon")
