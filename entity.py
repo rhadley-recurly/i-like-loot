@@ -131,13 +131,14 @@ class Actor(Entity):
         clone.parent = gamemap
         gamemap.entities.add(clone)
 
-        scale_base = 2
-        scale_factor = scale_base * int(gamemap.engine.game_world.current_floor * 0.5)
-        clone.fighter.max_hp += scale_factor
-        clone.fighter.hp += scale_factor
-        clone.fighter.base_defense += scale_factor
-        clone.fighter.min_damage += scale_factor
-        clone.fighter.max_damage += scale_factor
+        ### Mob scaling was a bad idea
+        #scale_base = 2
+        #scale_factor = scale_base * int(gamemap.engine.game_world.current_floor * 0.5)
+        #clone.fighter.max_hp += scale_factor
+        #clone.fighter.hp += scale_factor
+        #clone.fighter.base_defense += scale_factor
+        #clone.fighter.min_damage += scale_factor
+        #clone.fighter.max_damage += scale_factor
 
         return clone
 
@@ -196,5 +197,25 @@ class Item(Entity):
             clone.color = clone.equippable.get_color()
             clone.equippable.ilvl = random.randint(min_ilvl, max_ilvl)
             clone.name = "(ilvl " + str(clone.equippable.ilvl) + ") " + clone.name
+            clone.equippable.enchant()
 
         return clone
+
+    def get_use_text(self, player: Actor) -> str:
+        if self.equippable:
+            if self.equippable.is_equipped(player.equipment, "weapon") or self.equippable.is_equipped(player.equipment, "armor"):
+                return "(U)nequip"
+            else:
+                return "(E)quip"
+        elif self.consumable:
+            return self.consumable.get_use_text()
+
+    @property
+    def description(self) -> str:
+        description = f"{self.name}\n\n"
+        if self.equippable:
+            description += self.equippable.description
+        elif self.consumable:
+            description += self.consumable.description
+
+        return description

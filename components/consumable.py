@@ -51,6 +51,15 @@ class HealingConsumable(Consumable):
         else:
             raise Impossible(f"Your health is already full.")
 
+    @property
+    def description(self) -> str:
+        description = f"Heal for {self.amount} HP."
+
+        return description
+
+    def get_use_text(self) -> str:
+        return "(D)rink"
+
 class LightningDamageConsumable(Consumable):
     def __init__(self, damage: int, maximum_range: int):
         self.damage = damage
@@ -77,6 +86,15 @@ class LightningDamageConsumable(Consumable):
             self.consume()
         else:
             raise Impossible("No enemy is close enough to strike.")
+
+    @property
+    def description(self) -> str:
+        description = f"Cause {self.damage} damage to nearest target."
+
+        return description
+
+    def get_use_text(self) -> str:
+        return "(R)ead"
 
 class ConfusionConsumable(Consumable):
     def __init__(self, number_of_turns: int):
@@ -111,6 +129,15 @@ class ConfusionConsumable(Consumable):
         )
         self.consume()
 
+    @property
+    def description(self) -> str:
+        description = f"Target any enemy in sight and confuse\nthem for {self.number_of_turns} turns."
+
+        return description
+
+    def get_use_text(self) -> str:
+        return "(R)ead"
+
 class FireballDamageConsumable(Consumable):
     def __init__(self, damage: int, radius: int):
         self.damage = damage
@@ -144,3 +171,12 @@ class FireballDamageConsumable(Consumable):
         if not targets_hit:
             raise Impossible("There are no targets in the radius.")
         self.consume()
+
+    @property
+    def description(self) -> str:
+        description = f"Target anywhere in sight and cause {self.damage}\ndamage to everyone in {self.radius} radius."
+
+        return description
+
+    def get_use_text(self) -> str:
+        return "(R)ead"

@@ -136,7 +136,7 @@ class EventHandler(BaseEventHandler):
         """
         if action is None:
             return False
-
+ 
         try:
             action.perform()
         except exceptions.Impossible as exc:
@@ -177,8 +177,10 @@ class MainGameEventHandler(EventHandler):
             return HistoryViewer(self.engine)
         elif key == tcod.event.K_g:
             action = PickupAction(player)
-        elif key == tcod.event.K_i:
+        elif key == tcod.event.K_a:
             return InventoryActivateHandler(self.engine)
+        elif key == tcod.event.K_i:
+            return InventoryInfoHandler(self.engine)
         elif key == tcod.event.K_d:
             return InventoryDropHandler(self.engine)
         elif key == tcod.event.K_SLASH:
@@ -381,6 +383,60 @@ class InventoryActivateHandler(InventoryEventHandler):
             return actions.EquipAction(self.engine.player, item)
         else:
             return None
+
+class InventoryInfoHandler(InventoryEventHandler):
+    """Handle using an inventory item."""
+
+    TITLE = "          Inventory          "
+
+    def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
+        """Return the action for the selected item."""
+        return(InventoryDetailsHandler(self, item))
+
+class InventoryDetailsHandler(AskUserEventHandler):
+    def __init__(self, parent_handler: BaseEventHandler, item: Item):
+        self.parent = parent_handler
+        self.item = item
+        self.engine = parent_handler.engine
+
+    def on_render(self, console: tcod.Console) -> None:
+        self.parent.on_render(console)
+
+        height = 20
+        x = 20
+        y = 10
+        width = 40
+        title = "Item Details"
+
+        console.draw_frame(
+            x=x,
+            y=y,
+            width=width,
+            height=height,
+            title=title,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+
+        console.print(x + 1, y + 1, self.item.description)
+        use_text = self.item.get_use_text(self.engine.player)
+        console.print(x + 1, y + 19, f"{use_text} - (D)rop")
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+        player = self.engine.player
+        key = event.sym
+        mod = event.mod
+
+        if (key == tcod.event.K_e) or (key == tcod.event.K_r) or (key == tcod.event.K_u):
+            if self.item.consumable:
+                return self.item.consumable.get_action(player)
+            elif self.item.equippable:
+                return actions.EquipAction(player, self.item)
+        elif key == tcod.event.K_d:
+            return actions.DropItem(player, self.item)
+
+        return self.parent
 
 class InventoryDropHandler(InventoryEventHandler):
     """Handle dropping an inventory item."""
