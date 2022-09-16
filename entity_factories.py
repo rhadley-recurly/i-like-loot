@@ -56,7 +56,7 @@ dragon = Actor(
     name="Dragon",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=3, base_defense=10, min_damage=20, max_damage=30),
+    fighter=Fighter(hp=40, base_defense=10, min_damage=20, max_damage=30),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=160),
 )
