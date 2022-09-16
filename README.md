@@ -4,7 +4,7 @@
 
 ## Running
 
-1. git clone i-like-loot
+1. git clone git@github.com:rhadley-recurly/i-like-loot.git
 1. python3 -m venv i-like-loot
 1. cd i-like-loot
 1. source ./bin/activate
