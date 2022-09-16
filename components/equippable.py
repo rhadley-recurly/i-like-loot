@@ -64,6 +64,20 @@ class Equippable(BaseComponent):
 
         return float(multiplier)
 
+    def enchant(self) -> None:
+        max_enchants = 0
+        match self.rarity:
+            case RarityLevel.UNCOMMON:
+                max_enchants = 1
+            case RarityLevel.RARE:
+                max_enchants = 2
+            case RarityLevel.LEGENDARY:
+                max_enchants = 3
+            case RarityLevel.UNIQUE:
+                max_enchants = 4
+            case RarityLevel.SET:
+                max_enchants = 4
+
     @property
     def min_dmg(self) -> int:
         return int((self.min_damage + self.ilvl) * self.get_multiplier())
@@ -75,6 +89,43 @@ class Equippable(BaseComponent):
     @property
     def equipped_defense(self) -> int:
         return int((self.defense + self.ilvl) * self.get_multiplier())
+
+    def is_equipped(self, equipment: Equipment, slot: str) -> bool:
+        equipped_slot = getattr(equipment, slot)
+
+        if equipped_slot:
+            if equipped_slot.equippable == self:
+                return True
+
+        return False
+
+    @property
+    def description(self) -> str:
+        rarity = ""
+        match self.rarity:
+            case RarityLevel.COMMON:
+                rarity = "Common"
+            case RarityLevel.UNCOMMON:
+                rarity = "Uncommon"
+            case RarityLevel.RARE:
+                rarity = "Rare"
+            case RarityLevel.LEGENDARY:
+                rarity = "Legendary"
+            case RarityLevel.UNIQUE:
+                rarity = "Unique"
+            case RarityLevel.SET:
+                rarity = "Set"
+
+        description = f"Item Level: {self.ilvl}\n"
+        description += f"Rarity: {rarity}\n"
+
+        if self.defense > 0:
+            description += f"Defense: {self.equipped_defense}\n"
+
+        if self.min_damage > 0:
+            description += f"Damage: {self.min_dmg}-{self.max_dmg}\n"
+
+        return description
 
 class Dagger(Equippable):
     def __init__(self) -> None:
