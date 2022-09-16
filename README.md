@@ -1,5 +1,7 @@
 # i-like-loot
 
+![Main Menu](images/screenshots/main_menu.png?raw=true "Main Menu")
+
 ## Running
 
 1. git clone i-like-loot
