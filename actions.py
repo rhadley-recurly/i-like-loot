@@ -121,11 +121,12 @@ class MeleeAction(ActionWithDirection):
             raise exceptions.Impossible("Nothing to attack.")
 
         if self.entity.equipment.weapon:
-            damage = random.randint(self.entity.equipment.min_damage, self.entity.equipment.max_damage) - target.fighter.defense
+            damage = random.randint(self.entity.equipment.min_damage, self.entity.equipment.max_damage)
         else:
-            damage = random.randint(self.entity.fighter.unarmed_min_damage, self.entity.fighter.unarmed_max_damage) - target.fighter.defense
+            damage = random.randint(self.entity.fighter.unarmed_min_damage, self.entity.fighter.unarmed_max_damage)
 
         final_damage = int(math.ceil(damage * (100/(100 + target.fighter.defense))))
+        #final_damage = int(math.ceil(damage * (damage/(damage + target.fighter.defense))))
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:

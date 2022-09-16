@@ -264,6 +264,24 @@ class HistoryViewer(EventHandler):
             return MainGameEventHandler(self.engine)
         return None
 
+class GameWinHandler(HistoryViewer):
+    def __init__(self, engine: Engine):
+        super().__init__(engine)
+        self.engine.message_log.add_message("You won! You killed the dragon, woo.", color.impossible)
+
+    def on_quit(self) -> None:
+        """Handle exiting out of a finished game."""
+        if os.path.exists("savegame.sav"):
+            os.remove("savegame.sav")  # Deletes the active save file.
+        raise exceptions.QuitWithoutSaving()  # Avoid saving a finished game.
+
+    def ev_quit(self, event: tcod.event.Quit) -> None:
+        self.on_quit()
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> None:
+        if event.sym == tcod.event.K_ESCAPE:
+            self.on_quit()
+
 class AskUserEventHandler(EventHandler):
     """Handles user input for actions which require special input."""
 

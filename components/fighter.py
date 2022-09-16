@@ -54,6 +54,8 @@ class Fighter(BaseComponent):
         else:
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
+            if self.parent.name == "Dragon":
+                self.engine.win = True
 
         self.parent.char = "%"
         self.parent.color = (191, 0, 0)

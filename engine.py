@@ -19,11 +19,13 @@ if TYPE_CHECKING:
 class Engine:
     game_map: GameMap
     game_world: GameWorld
+    win: bool
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+        self.win = False
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
