@@ -428,7 +428,7 @@ class InventoryDetailsHandler(AskUserEventHandler):
         key = event.sym
         mod = event.mod
 
-        if (key == tcod.event.K_e) or (key == tcod.event.K_r) or (key == tcod.event.K_u):
+        if (key == tcod.event.K_e) or (key == tcod.event.K_r) or (key == tcod.event.K_u) or (key == tcod.event.K_q):
             if self.item.consumable:
                 return self.item.consumable.get_action(player)
             elif self.item.equippable:

@@ -58,7 +58,7 @@ class HealingConsumable(Consumable):
         return description
 
     def get_use_text(self) -> str:
-        return "(D)rink"
+        return "(Q)uaff"
 
 class LightningDamageConsumable(Consumable):
     def __init__(self, damage: int, maximum_range: int):
