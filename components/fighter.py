@@ -32,10 +32,21 @@ class Fighter(BaseComponent):
 
     @property
     def defense(self) -> int:
+        defense = self.base_defense
+        if self.parent.equipment.weapon:
+            defense += self.parent.equipment.weapon.equippable.equipped_defense
+        if self.parent.equipment.head:
+            defense += self.parent.equipment.head.equippable.equipped_defense
         if self.parent.equipment.armor:
-            return self.parent.equipment.armor.equippable.equipped_defense
-        else:
-            return self.base_defense
+            defense += self.parent.equipment.armor.equippable.equipped_defense
+        if self.parent.equipment.hands:
+            defense += self.parent.equipment.hands.equippable.equipped_defense
+        if self.parent.equipment.pants:
+            defense += self.parent.equipment.pants.equippable.equipped_defense
+        if self.parent.equipment.shoes:
+            defense += self.parent.equipment.shoes.equippable.equipped_defense
+
+        return defense
 
     @property
     def unarmed_min_damage(self) -> int:

@@ -130,3 +130,31 @@ chain_mail = Item(
     name="Chain Mail",
     equippable=equippable.ChainMail()
 )
+
+helmet = Item(
+    char="[",
+    color=(139, 69, 19),
+    name="Helmet",
+    equippable=equippable.Helmet()
+)
+
+gloves = Item(
+    char="[",
+    color=(139, 69, 19),
+    name="Gloves",
+    equippable=equippable.Hands()
+)
+
+pants = Item(
+    char="[",
+    color=(139, 69, 19),
+    name="Greeves",
+    equippable=equippable.Pants()
+)
+
+flipflops = Item(
+    char="[",
+    color=(139, 69, 19),
+    name="Flipflops",
+    equippable=equippable.Shoes()
+)
