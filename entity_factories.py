@@ -65,6 +65,15 @@ health_potion = Item(
     char="!",
     color=(127, 0, 255),
     name="Health Potion",
+    stackable=True,
+    consumable=consumable.HealingConsumable(amount=5),
+)
+
+taco = Item(
+    char="!",
+    color=(127, 0, 255),
+    name="Taco",
+    stackable=True,
     consumable=consumable.HealingConsumable(amount=5),
 )
 
@@ -72,6 +81,7 @@ super_health_potion = Item(
     char="!",
     color=(163, 31, 31),
     name="Super Health Potion",
+    stackable=True,
     consumable=consumable.HealingConsumable(amount=20),
 )
 
@@ -79,6 +89,7 @@ lightning_scroll = Item(
     char="~",
     color=(255, 255, 0),
     name="Lightning Scroll",
+    stackable=True,
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
 )
 
@@ -86,6 +97,7 @@ confusion_scroll = Item(
     char="~",
     color=(207, 63, 255),
     name="Confusion Scroll",
+    stackable=True,
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 
@@ -93,6 +105,7 @@ fireball_scroll = Item(
     char="~",
     color=(255, 0, 0),
     name="Fireball Scroll",
+    stackable=True,
     consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
 )
 
@@ -100,6 +113,7 @@ blink_scroll = Item(
     char="~",
     color=(177, 196, 193),
     name="Blink Scroll",
+    stackable=True,
     consumable=consumable.BlinkConsumable(),
 )
 

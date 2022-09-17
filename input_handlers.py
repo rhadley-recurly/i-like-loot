@@ -323,7 +323,7 @@ class InventoryEventHandler(AskUserEventHandler):
         they are.
         """
         super().on_render(console)
-        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+        number_of_items_in_inventory = len(self.engine.player.inventory.sorted_stacked_items)
 
         height = number_of_items_in_inventory + 2
 
@@ -351,7 +351,7 @@ class InventoryEventHandler(AskUserEventHandler):
         )
 
         if number_of_items_in_inventory > 0:
-            for i, item in enumerate(self.engine.player.inventory.items):
+            for i, item in enumerate(self.engine.player.inventory.sorted_stacked_items):
                 item_key = chr(ord("a") + i)
                 is_equipped = self.engine.player.equipment.item_is_equipped(item)
 
@@ -365,6 +365,10 @@ class InventoryEventHandler(AskUserEventHandler):
                 else:
                     fg_color = color.white
 
+                if item.stackable:
+                    if item.count > 1:
+                        item_string = f"{item_string} ({item.count})"
+
                 console.print(x + 1, y + i + 1, item_string, fg=fg_color)
         else:
             console.print(x + 1, y + 1, "(Empty)")
@@ -376,7 +380,7 @@ class InventoryEventHandler(AskUserEventHandler):
 
         if 0 <= index <= 26:
             try:
-                selected_item = player.inventory.items[index]
+                selected_item = player.inventory.sorted_stacked_items[index]
             except IndexError:
                 self.engine.message_log.add_message("Invalid entry.", color.invalid)
                 return None
