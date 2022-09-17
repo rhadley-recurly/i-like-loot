@@ -88,7 +88,10 @@ class Equippable(BaseComponent):
 
     @property
     def equipped_defense(self) -> int:
-        return int((self.defense + self.ilvl) * self.get_multiplier())
+        if self.defense > 0:
+            return int((self.defense + self.ilvl) * self.get_multiplier())
+        else:
+            return self.defense
 
     def is_equipped(self, equipment: Equipment, slot: str) -> bool:
         equipped_slot = getattr(equipment, slot)
@@ -142,3 +145,19 @@ class LeatherArmor(Equippable):
 class ChainMail(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.ARMOR, defense=6)
+
+class Helmet(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.HEAD, defense=2)
+
+class Pants(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.PANTS, defense=2)
+
+class Hands(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.HANDS, defense=2)
+
+class Shoes(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.SHOES, defense=2)
