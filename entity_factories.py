@@ -66,15 +66,15 @@ health_potion = Item(
     color=(127, 0, 255),
     name="Health Potion",
     stackable=True,
-    consumable=consumable.HealingConsumable(amount=5),
+    consumable=consumable.HealingConsumable(amount=5, empowered=0),
 )
 
 taco = Item(
-    char="!",
-    color=(127, 0, 255),
+    char="$",
+    color=(179, 115, 27),
     name="Taco",
     stackable=True,
-    consumable=consumable.HealingConsumable(amount=5),
+    consumable=consumable.HealingConsumable(amount=10, empowered=1),
 )
 
 super_health_potion = Item(
@@ -82,7 +82,7 @@ super_health_potion = Item(
     color=(163, 31, 31),
     name="Super Health Potion",
     stackable=True,
-    consumable=consumable.HealingConsumable(amount=20),
+    consumable=consumable.HealingConsumable(amount=20, empowered=0),
 )
 
 lightning_scroll = Item(
@@ -129,6 +129,27 @@ sword = Item(
     color = (255, 255, 255),
     name="Sword",
     equippable=equippable.Sword(),
+)
+
+axe = Item(
+    char="/",
+    color = (255, 255, 255),
+    name="Axe",
+    equippable=equippable.Axe(),
+)
+
+nunchucks = Item(
+    char="/",
+    color = (255, 255, 255),
+    name="Nunchucks",
+    equippable=equippable.Nunchucks(),
+)
+
+powerglove = Item(
+    char="\"",
+    color = (255, 255, 255),
+    name="Nintendo Power Glove",
+    equippable=equippable.Powerglove(),
 )
 
 leather_armor = Item(

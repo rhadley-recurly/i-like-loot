@@ -138,6 +138,18 @@ class Sword(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=1, max_damage=8)
 
+class Axe(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=3, max_damage=6)
+
+class Nunchucks(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=5, max_damage=5)
+
+class Powerglove(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.WEAPON, min_damage=1, max_damage=30)
+
 class LeatherArmor(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.ARMOR, defense=3)

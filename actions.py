@@ -126,7 +126,12 @@ class MeleeAction(ActionWithDirection):
             damage = random.randint(self.entity.fighter.unarmed_min_damage, self.entity.fighter.unarmed_max_damage)
 
         final_damage = int(math.ceil(damage * (100/(100 + target.fighter.defense))))
-        #final_damage = int(math.ceil(damage * (damage/(damage + target.fighter.defense))))
+
+        spicy = ""
+        if self.entity.fighter.empowered > 0:
+            final_damage = final_damage * 2
+            self.entity.fighter.empowered -= 1
+            spicy = "..... SPICY!"
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:
@@ -136,7 +141,7 @@ class MeleeAction(ActionWithDirection):
 
         if final_damage > 0:
             self.engine.message_log.add_message(
-                f"{attack_desc} for {final_damage} hit points.", attack_color
+                f"{attack_desc} for {final_damage} hit points.{spicy}", attack_color
             )
             target.fighter.hp -= final_damage
         else:

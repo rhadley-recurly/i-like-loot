@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 class Fighter(BaseComponent):
     parent: Actor
+    empowered: int
 
     def __init__(self, hp: int, base_defense: int, min_damage: int, max_damage):
         self.max_hp = hp
@@ -19,6 +20,7 @@ class Fighter(BaseComponent):
         self.base_defense = base_defense
         self.min_damage = min_damage
         self.max_damage = max_damage
+        self.empowered = 0
 
     @property
     def hp(self) -> int:
