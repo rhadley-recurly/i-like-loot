@@ -15,17 +15,59 @@ class Fighter(BaseComponent):
     parent: Actor
     empowered: int
 
-    def __init__(self, hp: int, base_defense: int, min_damage: int, max_damage):
+    def __init__(self, hp: int, mp: int, base_defense: int, min_damage: int, max_damage, strength: int, intelligence: int, dexterity: int, constitution: int):
         self._max_hp = hp
-        self._hp = hp
+        self._max_mp = mp
         self.base_defense = base_defense
         self.min_damage = min_damage
         self.max_damage = max_damage
+        self._strength = strength
+        self._intelligence = intelligence
+        self._dexterity = dexterity
+        self._constitution = constitution
+        self._mp = mp + intelligence
+        self._hp = hp + constitution
         self.empowered = 0
 
     @property
+    def strength(self) -> int:
+        adjusted_strength = self._strength
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.STR:
+                adjusted_strength += int(enchant.bonus)
+                    
+        return adjusted_strength
+
+    @property
+    def intelligence(self) -> int:
+        adjusted_intelligence = self._intelligence
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.INT:
+                adjusted_intelligence += int(enchant.bonus)
+                    
+        return adjusted_intelligence
+
+    @property
+    def dexterity(self) -> int:
+        adjusted_dexterity = self._dexterity
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.DEX:
+                adjusted_dexterity += int(enchant.bonus)
+                    
+        return adjusted_dexterity
+
+    @property
+    def constitution(self) -> int:
+        adjusted_constitution = self._constitution
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.CON:
+                adjusted_constitution += int(enchant.bonus)
+                    
+        return adjusted_constitution
+
+    @property
     def max_hp(self) -> int:
-        adjusted_hp = self._max_hp
+        adjusted_hp = self._max_hp + self.constitution
         for enchant in self.parent.equipment.enchants:
             if enchant.enchant_type == enchant_types.EnchantType.HP:
                 adjusted_hp += int(enchant.bonus)
@@ -33,14 +75,31 @@ class Fighter(BaseComponent):
         return adjusted_hp
 
     @property
+    def max_mp(self) -> int:
+        adjusted_mp = self._max_mp + self.intelligence
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.MP:
+                adjusted_mp += int(enchant.bonus)
+                    
+        return adjusted_mp
+
+    @property
     def hp(self) -> int:
         return round(self._hp)
+
+    @property
+    def mp(self) -> int:
+        return round(self._mp)
 
     @hp.setter
     def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self.max_hp))
         if self._hp == 0 and self.parent.ai:
             self.die()
+
+    @mp.setter
+    def mp(self, value: int) -> None:
+        self._mp = max(0, min(value, self.max_mp))
 
     @property
     def defense(self) -> int:
@@ -110,5 +169,23 @@ class Fighter(BaseComponent):
 
         return amount_recovered
 
+    def restore(self, amount: int) -> int:
+        if self.mp == self.max_mp:
+            return 0
+
+        new_mp_value = self.mp + amount
+
+        if new_mp_value > self.max_mp:
+            new_mp_value = self.max_mp
+
+        amount_recovered = new_mp_value - self.mp
+
+        self.mp = new_mp_value
+
+        return amount_recovered
+
     def take_damage(self, amount: int) -> None:
         self.hp -= amount
+
+    def use_mp(self, amount: int) -> None:
+        self.mp -= amount

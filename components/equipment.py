@@ -133,3 +133,41 @@ class Equipment(BaseComponent):
             self.unequip_from_slot(slot, add_message)
         else:
             self.equip_to_slot(slot, equippable_item, add_message)
+
+    def sort_abilities(self, ability: Enchant) -> str:
+        sort_by = ability.name
+        return sort_by
+
+    @property
+    def abilities(self) -> List:
+        abilities = []
+
+        for item in self.equipped_items:
+            for enchant in item.equippable.enchants:
+                if enchant.enchant_type == EnchantType.ABILITY:
+                    abilities.append(enchant)
+
+        abilities.sort(key=self.sort_abilities)
+
+        my_abilities = []
+        previous_ability = None
+        level = 0
+
+        for ability in abilities:
+            if level == 0:
+                if previous_ability is None:
+                    previous_ability = ability
+
+            if previous_ability.enchant_type != ability.enchant_type:
+                previous_ability.level = level
+                level = 1
+                my_abilities.append(previous_ability)
+                previous_ability = ability
+            else:
+                level += 1
+
+        if level > 0:
+            previous_ability.level = level
+            my_abilities.append(previous_ability)
+
+        return my_abilities

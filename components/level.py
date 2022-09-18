@@ -58,3 +58,23 @@ class Level(BaseComponent):
         self.engine.message_log.add_message("Your health improves!")
 
         self.increase_level()
+
+    def increase_str(self, amount: int = 1) -> None:
+        self.parent.fighter._strength += amount
+        self.engine.message_log.add_message("Your strength improves!")
+        self.increase_level()
+
+    def increase_int(self, amount: int = 1) -> None:
+        self.parent.fighter._intelligence += amount
+        self.engine.message_log.add_message("Your intelligence improves!")
+        self.increase_level()
+
+    def increase_dex(self, amount: int = 1) -> None:
+        self.parent.fighter._dexterity += amount
+        self.engine.message_log.add_message("Your dexterity improves!")
+        self.increase_level()
+
+    def increase_con(self, amount: int = 1) -> None:
+        self.parent.fighter._constitution += amount
+        self.engine.message_log.add_message("Your constitution improves!")
+        self.increase_level()

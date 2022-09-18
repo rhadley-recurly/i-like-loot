@@ -12,7 +12,7 @@ player = Actor(
     name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=30, base_defense=2, min_damage=1, max_damage=2),
+    fighter=Fighter(hp=30, mp=4, base_defense=2, min_damage=1, max_damage=2, strength=5, intelligence=5, dexterity=5, constitution=5),
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
 )
@@ -23,7 +23,7 @@ orc = Actor(
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=8, base_defense=0, min_damage=1, max_damage=4),
+    fighter=Fighter(hp=8, mp=4, base_defense=0, min_damage=1, max_damage=4, strength=5, intelligence=5, dexterity=5, constitution=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=20),
 )
@@ -34,7 +34,7 @@ troll = Actor(
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=12, base_defense=4, min_damage=4, max_damage=10),
+    fighter=Fighter(hp=12, mp=4, base_defense=4, min_damage=4, max_damage=10, strength=5, intelligence=5, dexterity=5, constitution=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=40),
 )
@@ -45,7 +45,7 @@ ogre = Actor(
     name="Ogre",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=20, base_defense=8, min_damage=15, max_damage=25),
+    fighter=Fighter(hp=20, mp=4, base_defense=8, min_damage=15, max_damage=25, strength=5, intelligence=5, dexterity=5, constitution=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=80),
 )
@@ -56,9 +56,17 @@ dragon = Actor(
     name="Dragon",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=40, base_defense=10, min_damage=20, max_damage=30),
+    fighter=Fighter(hp=40, mp=4, base_defense=10, min_damage=20, max_damage=30, strength=5, intelligence=5, dexterity=5, constitution=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=160),
+)
+
+mana_potion = Item(
+    char="!",
+    color=(0, 65, 168),
+    name="Mana Potion",
+    stackable=True,
+    consumable=consumable.ManaConsumable(amount=5)
 )
 
 health_potion = Item(

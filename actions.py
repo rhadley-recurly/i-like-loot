@@ -59,6 +59,25 @@ class PickupAction(Action):
 
         raise exceptions.Impossible("There is nothing here to pick up.")
 
+class AbilityAction(Action):
+    def __init__(
+        self, entity: Actor, ability: Enchant, target_xy: Optional[Tuple[int, int]] = None
+    ):
+        super().__init__(entity)
+        self.ability = ability
+        if not target_xy:
+            target_xy = entity.x, entity.y
+        self.target_xy = target_xy
+
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_actor_at_location(*self.target_xy)
+
+    def perform(self) -> None:
+        """Invoke the items ability, this action will be given to provide context."""
+        self.ability.activate(self, self.target_xy)
+
 class ItemAction(Action):
     def __init__(
         self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None

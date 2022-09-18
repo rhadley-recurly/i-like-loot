@@ -34,6 +34,7 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [
         (entity_factories.taco, 1),
         (entity_factories.health_potion, 15),
+        (entity_factories.mana_potion, 2),
         (entity_factories.chain_mail, 5),
         (entity_factories.helmet, 5),
         (entity_factories.gloves, 5),
