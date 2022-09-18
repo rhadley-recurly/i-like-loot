@@ -5,7 +5,7 @@ import actions
 from exceptions import Impossible
 from components.base_component import BaseComponent
 from enchant_types import EnchantType
-from input_handlers import AreaMeleeAttackHandler
+from input_handlers import AreaMeleeAttackHandler, BeemRangedAttackHandler
 
 class Enchant(BaseComponent):
     parent: Item
@@ -178,7 +178,7 @@ class LightningBolt(EnchantAbility):
     def __init__(self) -> None:
         super().__init__(
             name="Lightning Bolt",
-            mana=2,
+            mana=1,
         )
 
     @property
@@ -187,16 +187,23 @@ class LightningBolt(EnchantAbility):
 
         return description
 
-    def get_action(self, user: Actor) -> SingleRangedAttackHandler:
+    def get_action(self, user: Actor) -> BeemRangedAttackHandler:
         self.engine.message_log.add_message(
             "Select a target location.", color.needs_target
         )
-        return SingleRangedAttackHandler(
+        return BeemRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.AbilityAction(user, self, xy),
         )
 
-    def activate(self, action: actions.AbilityAction, xy: Tuple[int, int]) -> None:
+    def activate(self, action: actions.AbilityAction, path: Tuple[int, int]) -> None:
         super().activate(action=action)
 
         damage = self.level * self.engine.player.fighter.intelligence
+        for xy in path:
+            target = self.engine.game_map.get_actor_at_location(xy[0], xy[1])
+            if target:
+                target.fighter.take_damage(damage)
+                self.engine.message_log.add_message(
+                    f"The lightning bolt zaps {target.name} for {damage} damage!"
+                )
