@@ -4,6 +4,7 @@ import os
 from typing import TYPE_CHECKING
 
 import color
+import enchant_types
 from components.base_component import BaseComponent
 from render_order import RenderOrder
 
@@ -15,7 +16,7 @@ class Fighter(BaseComponent):
     empowered: int
 
     def __init__(self, hp: int, base_defense: int, min_damage: int, max_damage):
-        self.max_hp = hp
+        self._max_hp = hp
         self._hp = hp
         self.base_defense = base_defense
         self.min_damage = min_damage
@@ -23,8 +24,17 @@ class Fighter(BaseComponent):
         self.empowered = 0
 
     @property
+    def max_hp(self) -> int:
+        adjusted_hp = self._max_hp
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.HP:
+                adjusted_hp += int(enchant.bonus)
+                    
+        return adjusted_hp
+
+    @property
     def hp(self) -> int:
-        return self._hp
+        return round(self._hp)
 
     @hp.setter
     def hp(self, value: int) -> None:
@@ -47,6 +57,10 @@ class Fighter(BaseComponent):
             defense += self.parent.equipment.pants.equippable.equipped_defense
         if self.parent.equipment.shoes:
             defense += self.parent.equipment.shoes.equippable.equipped_defense
+
+        for enchant in self.parent.equipment.enchants:
+            if enchant.enchant_type == enchant_types.EnchantType.DEFENSE:
+                defense += int(enchant.bonus)
 
         return defense
 

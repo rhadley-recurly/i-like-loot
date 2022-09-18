@@ -6,6 +6,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
 import exceptions
+import enchant_types
 from render_functions import get_names_at_location
 
 if TYPE_CHECKING:
@@ -144,6 +145,14 @@ class MeleeAction(ActionWithDirection):
                 f"{attack_desc} for {final_damage} hit points.{spicy}", attack_color
             )
             target.fighter.hp -= final_damage
+
+            leech_percent = 0
+            for enchant in self.entity.equipment.enchants:
+                if enchant.enchant_type == enchant_types.EnchantType.LEECH:
+                    leech_percent += int(enchant.bonus)
+
+            leech_amount = (leech_percent/100) * final_damage
+            self.entity.fighter.hp += leech_amount
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color
