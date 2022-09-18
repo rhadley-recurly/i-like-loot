@@ -85,7 +85,7 @@ class Equippable(BaseComponent):
         ]
         abilities = [
             components.enchant.Whirlwind(),
-            #components.enchant.LightningBolt(),
+            components.enchant.LightningBolt(),
         ]
         max_enchants = 0
 

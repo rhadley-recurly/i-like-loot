@@ -61,13 +61,13 @@ class PickupAction(Action):
 
 class AbilityAction(Action):
     def __init__(
-        self, entity: Actor, ability: Enchant, target_xy: Optional[Tuple[int, int]] = None
+        self, entity: Actor, ability: Enchant, targets_xy: Optional[List[Tuple[int, int]]] = None
     ):
         super().__init__(entity)
         self.ability = ability
-        if not target_xy:
+        if not targets_xy:
             target_xy = entity.x, entity.y
-        self.target_xy = target_xy
+        self.target_xy = targets_xy
 
     @property
     def target_actor(self) -> Optional[Actor]:

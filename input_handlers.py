@@ -6,6 +6,8 @@ import color
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 
 import tcod.event
+import numpy as np  # type: ignore
+import tcod
 
 import actions
 from actions import (
@@ -618,6 +620,44 @@ class SingleRangedAttackHandler(SelectIndexHandler):
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
+
+class BeemRangedAttackHandler(SelectIndexHandler):
+    """Handles targeting a single enemy. Only the enemy selected will be affected."""
+
+    def __init__(
+        self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
+    ):
+        super().__init__(engine)
+
+        self.callback = callback
+        self.player = self.engine.player
+        self.beem_path = []
+
+    def on_render(self, console: tcod.Console) -> None:
+        """Highlight the tile under the cursor."""
+        super().on_render(console)
+        x, y = self.engine.mouse_location
+
+        if self.player.gamemap.visible[x, y]:
+            cost = np.array(self.player.gamemap.tiles["walkable"], dtype=np.int8)
+            graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=3)
+            pathfinder = tcod.path.Pathfinder(graph)
+
+            pathfinder.add_root((self.player.x, self.player.y))  # Start position.
+
+            # Compute the path to the destination and remove the starting point.
+            path: List[List[int]] = pathfinder.path_to((x, y))[1:].tolist()
+
+            # Convert from List[List[int]] to List[Tuple[int, int]].
+            path = [(index[0], index[1]) for index in path]
+            for xy in path:
+                console.tiles_rgb["bg"][xy[0], xy[1]] = color.white
+                console.tiles_rgb["fg"][xy[0], xy[1]] = color.black
+
+            self.beem_path = path
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback(self.beem_path)
 
 class AreaRangedAttackHandler(SelectIndexHandler):
     """Handles targeting an area within a given radius. Any entity within the area will be affected."""
