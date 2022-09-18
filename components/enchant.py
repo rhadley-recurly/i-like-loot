@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import random
+
 import color
 import actions
 from exceptions import Impossible
 from components.base_component import BaseComponent
 from enchant_types import EnchantType
-from input_handlers import AreaMeleeAttackHandler, BeemRangedAttackHandler
+from input_handlers import AreaMeleeAttackHandler, BeemRangedAttackHandler, SingleRangedAttackHandler
 
 class Enchant(BaseComponent):
     parent: Item
@@ -206,3 +208,61 @@ class LightningBolt(EnchantAbility):
                 self.engine.message_log.add_message(
                     f"The lightning bolt zaps {target.name} for {damage} damage!"
                 )
+
+class ShadowStrike(EnchantAbility):
+    def __init__(self) -> None:
+        super().__init__(
+            name="Shadow Strike",
+            mana=2,
+        )
+
+    @property
+    def description(self) -> str:
+        description = f"(DEX) Shadow Strike (s)kill\n    Teleport and backstab a target.\n"
+
+        return description
+
+    def get_action(self, user: Actor) -> SingleRangedAttackHandler:
+        self.engine.message_log.add_message(
+            "Select a target location.", color.needs_target
+        )
+        return SingleRangedAttackHandler(
+            self.engine,
+            callback=lambda xy: actions.AbilityAction(user, self, xy),
+        )
+
+    def activate(self, action: actions.AbilityAction, target_xy: Tuple[int, int]) -> None:
+        super().activate(action=action)
+
+        damage = self.level * self.engine.player.fighter.dexterity
+        target = self.engine.game_map.get_actor_at_location(target_xy[0], target_xy[1])
+        if target:
+            # Find empty spaces around target
+            center_x = target_xy[0]
+            center_y = target_xy[1]
+            start_x = center_x - 1
+            stop_x = center_x + 1
+            start_y = center_y - 1
+            stop_y = center_y + 1
+
+            teleport_options = []
+            for x in range(start_x, stop_x + 1):
+                for y in range(start_y, stop_y + 1):
+                    if self.engine.game_map.tiles["walkable"][x, y]:
+                        if not self.engine.game_map.get_actor_at_location(x, y):
+                            teleport_options.append([x, y])
+
+            if not teleport_options:
+                raise Impossible("No empty tile to teleport to.")
+
+            teleport_to = random.choice(teleport_options)
+            self.engine.player.x = teleport_to[0]
+            self.engine.player.y = teleport_to[1]
+
+            target.fighter.take_damage(damage)
+            self.engine.message_log.add_message(
+                f"You step through the shadows and stab {target.name} doing {damage} damage!"
+            )
+        else:
+            raise Impossible("No one here to teleport to.")
+
