@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from tcod.console import Console
 from tcod.map import compute_fov
 
+import color
 import exceptions
 import render_functions
 from message_log import MessageLog
@@ -55,6 +56,21 @@ class Engine:
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=20,
+            text="HP",
+            color_filled=color.hp_bar_filled,
+            color_empty=color.hp_bar_empty,
+            y_offset=0,
+        )
+
+        render_functions.render_bar(
+            console=console,
+            current_value=self.player.fighter.mp,
+            maximum_value=self.player.fighter.max_mp,
+            total_width=20,
+            text="MP",
+            color_filled=color.mp_bar_filled,
+            color_empty=color.mp_bar_empty,
+            y_offset=1,
         )
 
         render_functions.render_dungeon_level(

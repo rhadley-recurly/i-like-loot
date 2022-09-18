@@ -171,6 +171,8 @@ class MainGameEventHandler(EventHandler):
             return actions.DownStairsAction(player)
         elif (key == tcod.event.K_COMMA) and (mod & tcod.event.Modifier.SHIFT):
             return actions.UpStairsAction(player)
+        elif (key == tcod.event.K_s) and (mod & tcod.event.Modifier.SHIFT):
+            raise SystemExit()
         elif key in WAIT_KEYS:
             action = WaitAction(player)
         elif key == tcod.event.K_v:
@@ -179,14 +181,14 @@ class MainGameEventHandler(EventHandler):
             action = PickupAction(player)
         elif key == tcod.event.K_a:
             return InventoryActivateHandler(self.engine)
+        elif key == tcod.event.K_s:
+            return SkillActivateHandler(self.engine)
         elif key == tcod.event.K_i:
             return InventoryInfoHandler(self.engine)
         elif key == tcod.event.K_d:
             return InventoryDropHandler(self.engine)
         elif key == tcod.event.K_SLASH:
             return LookHandler(self.engine)
-        elif (key == tcod.event.K_s) and (mod & tcod.event.Modifier.SHIFT):
-            raise SystemExit()
         elif key == tcod.event.K_c:
             return CharacterScreenEventHandler(self.engine)
 
@@ -308,6 +310,81 @@ class AskUserEventHandler(EventHandler):
         By default this returns to the main event handler.
         """
         return MainGameEventHandler(self.engine)
+
+class SkillEventHandler(AskUserEventHandler):
+    """This handler lets the user select a skill.
+
+    What happens then depends on the subclass.
+    """
+
+    TITLE = "<missing title>"
+
+    def on_render(self, console: tcod.Console) -> None:
+        super().on_render(console)
+        number_of_abilities = len(self.engine.player.equipment.abilities)
+
+        height = number_of_abilities + 2
+
+        if height <= 3:
+            height = 3
+
+        if self.engine.player.x <= 30:
+            x = 40
+        else:
+            x = 0
+
+        y = 0
+
+        width = len(self.TITLE) + 10
+
+        console.draw_frame(
+            x=x,
+            y=y,
+            width=width,
+            height=height,
+            title=self.TITLE,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+
+        if number_of_abilities > 0:
+            for i, ability in enumerate(self.engine.player.equipment.abilities):
+                ability_key = chr(ord("a") + i)
+
+                ability_string = f"({ability_key}) {ability.name} lvl: {ability.level} MP: {ability.mana}"
+                fg_color = color.white
+
+                console.print(x + 1, y + i + 1, ability_string, fg=fg_color)
+        else:
+            console.print(x + 1, y + 1, "(None)")
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+        player = self.engine.player
+        key = event.sym
+        index = key - tcod.event.K_a
+
+        if 0 <= index <= 26:
+            try:
+                selected_ability = player.equipment.abilities[index]
+            except IndexError:
+                self.engine.message_log.add_message("Invalid entry.", color.invalid)
+                return None
+            return self.on_ability_selected(selected_ability)
+        return super().ev_keydown(event)
+
+    def on_ability_selected(self, ability: Enchant) -> Optional[ActionOrHandler]:
+        """Called when the user selects a valid ability."""
+        raise NotImplementedError()
+
+class SkillActivateHandler(SkillEventHandler):
+    """Handle using an ability."""
+
+    TITLE = "Select an ability to use"
+
+    def on_ability_selected(self, ability: Enchant) -> Optional[ActionOrHandler]:
+        """Return the action for the selected ability."""
+        return ability.get_action(self.engine.player)
 
 class InventoryEventHandler(AskUserEventHandler):
     """This handler lets the user select an item.
@@ -575,6 +652,37 @@ class AreaRangedAttackHandler(SelectIndexHandler):
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
 
+class AreaMeleeAttackHandler(SelectIndexHandler):
+    def __init__(
+        self,
+        engine: Engine,
+        radius: int,
+        callback: Callable[[Tuple[int, int]], Optional[Action]],
+    ):
+        super().__init__(engine)
+
+        self.radius = radius + 1
+        self.callback = callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        super().on_render(console)
+
+        x = self.engine.player.x
+        y = self.engine.player.y
+
+        # Draw a rectangle around the targeted area, so the player can see the affected tiles.
+        console.draw_frame(
+            x=x - self.radius,
+            y=y - self.radius,
+            width=1 + (2 * self.radius),
+            height=1 + (2 * self.radius),
+            fg=color.red,
+            clear=False,
+        )
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback((x, y))
+
 class LevelUpEventHandler(AskUserEventHandler):
     TITLE = "Level Up"
 
@@ -589,8 +697,8 @@ class LevelUpEventHandler(AskUserEventHandler):
         console.draw_frame(
             x=x,
             y=0,
-            width=35,
-            height=8,
+            width=40,
+            height=10,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -603,7 +711,22 @@ class LevelUpEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=4,
-            string=f"a) Constitution (+5 HP, from {self.engine.player.fighter.max_hp})",
+            string=f"a) Strength (+1 STR, from {self.engine.player.fighter.strength})",
+        )
+        console.print(
+            x=x + 1,
+            y=5,
+            string=f"b) Intelligence (+1 INT, from {self.engine.player.fighter.intelligence})",
+        )
+        console.print(
+            x=x + 1,
+            y=6,
+            string=f"c) Dexterity (+1 DEX, from {self.engine.player.fighter.dexterity})",
+        )
+        console.print(
+            x=x + 1,
+            y=7,
+            string=f"d) Constitution (+1 CON, from {self.engine.player.fighter.constitution})",
         )
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
@@ -611,9 +734,15 @@ class LevelUpEventHandler(AskUserEventHandler):
         key = event.sym
         index = key - tcod.event.K_a
 
-        if 0 <= index <= 0:
+        if 0 <= index <= 3:
             if index == 0:
-                player.level.increase_max_hp()
+                player.level.increase_str()
+            elif index == 1:
+                player.level.increase_int()
+            elif index == 2:
+                player.level.increase_dex()
+            elif index == 3:
+                player.level.increase_con()
         else:
             self.engine.message_log.add_message("Invalid entry.", color.invalid)
 
@@ -642,7 +771,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
 
         y = 0
 
-        width = len(self.TITLE) + 4
+        width = len(self.TITLE) + 8
 
         console.draw_frame(
             x=x,
@@ -672,4 +801,8 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         )
         console.print(
             x=x +1, y=y + 6, string=f"Attack: {self.engine.player.equipment.min_damage}-{self.engine.player.equipment.max_damage}"
+        )
+
+        console.print(
+            x=x +1, y=y + 8, string=f"STR: {self.engine.player.fighter.strength} INT:{self.engine.player.fighter.intelligence} DEX:{self.engine.player.fighter.dexterity} CON:{self.engine.player.fighter.constitution}"
         )

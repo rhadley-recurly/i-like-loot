@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 import math
+import copy
 from typing import TYPE_CHECKING
 
 import color
@@ -72,9 +73,19 @@ class Equippable(BaseComponent):
     def enchant(self) -> None:
         enchants = [
             EnchantType.HP,
+            EnchantType.MP,
             EnchantType.DAMAGE,
             EnchantType.DEFENSE,
             EnchantType.LEECH,
+            EnchantType.ABILITY,
+            EnchantType.STR,
+            EnchantType.INT,
+            EnchantType.DEX,
+            EnchantType.CON,
+        ]
+        abilities = [
+            components.enchant.Whirlwind(),
+            #components.enchant.LightningBolt(),
         ]
         max_enchants = 0
 
@@ -99,12 +110,26 @@ class Equippable(BaseComponent):
                 match enchant_type:
                     case EnchantType.HP:
                         my_enchant = components.enchant.HPEnchant(bonus)
+                    case EnchantType.MP:
+                        my_enchant = components.enchant.MPEnchant(bonus)
                     case EnchantType.DAMAGE:
                         my_enchant = components.enchant.DamageEnchant(bonus)
                     case EnchantType.DEFENSE:
                         my_enchant = components.enchant.DefenseEnchant(bonus)
                     case EnchantType.LEECH:
                         my_enchant = components.enchant.LeechEnchant(bonus)
+                    case EnchantType.STR:
+                        my_enchant = components.enchant.STREnchant(bonus)
+                    case EnchantType.INT:
+                        my_enchant = components.enchant.INTEnchant(bonus)
+                    case EnchantType.DEX:
+                        my_enchant = components.enchant.DEXEnchant(bonus)
+                    case EnchantType.CON:
+                        my_enchant = components.enchant.CONEnchant(bonus)
+                    case EnchantType.ABILITY:
+                        my_enchant = copy.deepcopy(random.choice(abilities))
+
+                my_enchant.parent = self.parent
                 self.enchants.append(my_enchant)
 
     @property
