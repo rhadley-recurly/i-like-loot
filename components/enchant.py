@@ -160,19 +160,18 @@ class Whirlwind(EnchantAbility):
             callback=lambda xy: actions.AbilityAction(user, self, xy),
         )
 
-    def activate(self, action: actions.AbilityAction, xy: Tuple[int, int]) -> None:
+    def activate(self, action: actions.AbilityAction, area: Tuple[int, int]) -> None:
         super().activate(action=action)
 
-        self.radius += 1
         damage = 2 * self.engine.player.fighter.strength
 
-        for actor in self.engine.game_map.actors:
-            if actor.distance(*xy) <= self.radius:
-                if actor != self.engine.player:
-                    self.engine.message_log.add_message(
-                        f"The {actor.name} is caught up in your whirlwind, taking {damage} damage!"
-                    )
-                    actor.fighter.take_damage(damage)
+        for xy in area:
+            target = self.engine.game_map.get_actor_at_location(xy[0], xy[1])
+            if target:
+                self.engine.message_log.add_message(
+                    f"The {target.name} is caught up in your whirlwind, taking {damage} damage!"
+                )
+                target.fighter.take_damage(damage)
 
 class LightningBolt(EnchantAbility):
     def __init__(self) -> None:

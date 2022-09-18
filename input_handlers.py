@@ -701,27 +701,28 @@ class AreaMeleeAttackHandler(SelectIndexHandler):
     ):
         super().__init__(engine)
 
-        self.radius = radius + 1
+        self.radius = radius
         self.callback = callback
+        self.target_area = []
 
     def on_render(self, console: tcod.Console) -> None:
         super().on_render(console)
 
-        x = self.engine.player.x
-        y = self.engine.player.y
+        center_x = self.engine.player.x
+        center_y = self.engine.player.y
+        start_x = center_x - self.radius
+        stop_x = center_x + self.radius
+        start_y = center_y - self.radius
+        stop_y = center_y + self.radius
 
-        # Draw a rectangle around the targeted area, so the player can see the affected tiles.
-        console.draw_frame(
-            x=x - self.radius,
-            y=y - self.radius,
-            width=1 + (2 * self.radius),
-            height=1 + (2 * self.radius),
-            fg=color.red,
-            clear=False,
-        )
+        for x in range(start_x, stop_x + 1):
+            for y in range(start_y, stop_y + 1):
+                console.tiles_rgb["bg"][x, y] = color.white
+                console.tiles_rgb["fg"][x, y] = color.black
+                self.target_area.append([x, y])
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
-        return self.callback((x, y))
+        return self.callback(self.target_area)
 
 class LevelUpEventHandler(AskUserEventHandler):
     TITLE = "Level Up"
