@@ -209,7 +209,7 @@ class Item(Entity):
 
     def get_use_text(self, player: Actor) -> str:
         if self.equippable:
-            if self.equippable.is_equipped(player.equipment, "weapon") or self.equippable.is_equipped(player.equipment, "armor"):
+            if self.equippable.is_equipped(player.equipment, "weapon") or self.equippable.is_equipped(player.equipment, "armor") or self.equippable.is_equipped(player.equipment, "head") or self.equippable.is_equipped(player.equipment, "hands") or self.equippable.is_equipped(player.equipment, "pants") or self.equippable.is_equipped(player.equipment, "shoes"):
                 return "(U)nequip"
             else:
                 return "(E)quip"

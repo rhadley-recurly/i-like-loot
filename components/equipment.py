@@ -4,6 +4,7 @@ from typing import Optional, TYPE_CHECKING
 
 from components.base_component import BaseComponent
 from equipment_types import EquipmentType
+from enchant_types import EnchantType
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -20,14 +21,49 @@ class Equipment(BaseComponent):
         self.head = head
 
     @property
-    def min_damage(self) -> int:
+    def enchants(self) -> List:
+        my_enchants = []
+        for item in self.equipped_items:
+            for enchant in item.equippable.enchants:
+                my_enchants.append(enchant)
+
+        return my_enchants
+
+    @property
+    def equipped_items(self) -> List:
+        equipped = []
         if self.weapon:
-            return self.weapon.equippable.min_dmg
+            equipped.append(self.weapon)
+        if self.armor:
+            equipped.append(self.armor)
+        if self.hands:
+            equipped.append(self.hands)
+        if self.pants:
+            equipped.append(self.pants)
+        if self.shoes:
+            equipped.append(self.shoes)
+        if self.head:
+            equipped.append(self.head)
+
+        return equipped
+
+    @property
+    def min_damage(self) -> int:
+        adjusted_damage = 0
+        for enchant in self.enchants:
+            if enchant.enchant_type == EnchantType.DAMAGE:
+                adjusted_damage += int(enchant.bonus)
+        if self.weapon:
+            return self.weapon.equippable.min_dmg + adjusted_damage
 
     @property
     def max_damage(self) -> int:
+        adjusted_damage = 0
+        for enchant in self.enchants:
+            if enchant.enchant_type == EnchantType.DAMAGE:
+                adjusted_damage += int(enchant.bonus)
         if self.weapon:
-            return self.weapon.equippable.max_dmg
+            return self.weapon.equippable.max_dmg + adjusted_damage
 
     def item_is_equipped(self, item: Item) -> bool:
         if item.equippable:

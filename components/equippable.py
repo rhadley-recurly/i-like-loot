@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import random
+import math
 from typing import TYPE_CHECKING
 
 import color
+import components.enchant
 from components.base_component import BaseComponent
 from equipment_types import EquipmentType
+from enchant_types import EnchantType
 from rarity_levels import RarityLevel
 
 if TYPE_CHECKING:
@@ -28,6 +32,7 @@ class Equippable(BaseComponent):
         self.defense = defense
         self.min_damage = min_damage
         self.max_damage = max_damage
+        self.enchants = []
 
     def get_color(self) -> Tuple[int, int, int]:
         match self.rarity:
@@ -65,7 +70,14 @@ class Equippable(BaseComponent):
         return float(multiplier)
 
     def enchant(self) -> None:
+        enchants = [
+            EnchantType.HP,
+            EnchantType.DAMAGE,
+            EnchantType.DEFENSE,
+            EnchantType.LEECH,
+        ]
         max_enchants = 0
+
         match self.rarity:
             case RarityLevel.UNCOMMON:
                 max_enchants = 1
@@ -77,6 +89,23 @@ class Equippable(BaseComponent):
                 max_enchants = 4
             case RarityLevel.SET:
                 max_enchants = 4
+
+        if max_enchants > 0:
+            bonus = int(math.ceil(self.ilvl * self.get_multiplier()))
+            if bonus < 1:
+                bonus = 1
+            for num in range(random.randint(0, max_enchants)):
+                enchant_type = random.choice(enchants)
+                match enchant_type:
+                    case EnchantType.HP:
+                        my_enchant = components.enchant.HPEnchant(bonus)
+                    case EnchantType.DAMAGE:
+                        my_enchant = components.enchant.DamageEnchant(bonus)
+                    case EnchantType.DEFENSE:
+                        my_enchant = components.enchant.DefenseEnchant(bonus)
+                    case EnchantType.LEECH:
+                        my_enchant = components.enchant.LeechEnchant(bonus)
+                self.enchants.append(my_enchant)
 
     @property
     def min_dmg(self) -> int:
@@ -127,6 +156,11 @@ class Equippable(BaseComponent):
 
         if self.min_damage > 0:
             description += f"Damage: {self.min_dmg}-{self.max_dmg}\n"
+
+        description += "\n"
+
+        for enchant in self.enchants:
+            description += enchant.description
 
         return description
 
