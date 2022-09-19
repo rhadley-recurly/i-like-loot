@@ -158,7 +158,7 @@ class Equipment(BaseComponent):
                 if previous_ability is None:
                     previous_ability = ability
 
-            if previous_ability.enchant_type != ability.enchant_type:
+            if previous_ability.name != ability.name:
                 previous_ability.level = level
                 level = 1
                 my_abilities.append(previous_ability)
